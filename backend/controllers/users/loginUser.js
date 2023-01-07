@@ -3,7 +3,6 @@ const bcrypt = require("bcrypt");
 const generateToken = require("../../helpers/generateToken");
 
 const loginUser = async (req, res) => {
-  console.log("LOGIN");
   // 1) перевіряємо, чи ввів користувач необхідні поля
   const { userEmail, userPassword } = req.body;
   console.log(req.body);

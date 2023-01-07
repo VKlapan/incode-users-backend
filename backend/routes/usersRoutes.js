@@ -1,9 +1,10 @@
 const express = require("express");
 const controllers = require("../controllers/users");
+const middlewares = require("../middlewares");
 
 const route = express.Router();
 
-route.get("/", controllers.getAllUsers);
+route.get("/", middlewares.authMiddleware, controllers.getAllUsers);
 route.post("/signup", controllers.createUser);
 route.get("/signin", controllers.loginUser);
 
