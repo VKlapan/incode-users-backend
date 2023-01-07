@@ -5,7 +5,6 @@ const generateToken = require("../../helpers/generateToken");
 const loginUser = async (req, res) => {
   // 1) перевіряємо, чи ввів користувач необхідні поля
   const { userEmail, userPassword } = req.body;
-  console.log(req.body);
 
   if (!userEmail || !userPassword) {
     return res
