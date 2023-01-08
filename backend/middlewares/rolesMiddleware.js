@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const dotenv = require("dotenv");
 
 const rolesMiddleware = (requiredRole) => {
   return (req, res, next) => {
@@ -16,9 +17,10 @@ const rolesMiddleware = (requiredRole) => {
           });
         }
 
-        const decoded = jwt.verify(token, "pizzaSecret");
-        const { role } = decoded.data;
-        if (requiredRole !== role) {
+        const decoded = jwt.verify(token, process.env.SECRET);
+        const { roles } = decoded.data;
+
+        if (requiredRole !== roles) {
           return res
             .status(403)
             .json({ code: 403, message: "You don't have permission" });
