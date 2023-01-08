@@ -5,7 +5,7 @@ const generateToken = (data) => {
   const payload = { data };
 
   return jwt.sign(payload, process.env.SECRET, {
-    expiresIn: "2h",
+    //expiresIn: "2h",
   });
 };
 

@@ -10,23 +10,18 @@ const getAllUsers = async (req, res) => {
       res.status(200).json({ code: 200, user: user });
       break;
     case "boss":
-      //      const subordinates = await User.find({ boss: id });
-      const boss_subordinates = await getSubSubordinates([{ id }]);
+      let boss_subordinates = await getSubSubordinates([{ id }]);
+      let iterationSubordinates = boss_subordinates;
 
-      const boss_subordinates_subordinates = await getSubSubordinates(
-        boss_subordinates
-      );
-
-      const boss_subordinates_subordinates_subordinates =
-        await getSubSubordinates(boss_subordinates_subordinates);
+      do {
+        iterationSubordinates = await getSubSubordinates(iterationSubordinates);
+        boss_subordinates = [...boss_subordinates, ...iterationSubordinates];
+      } while (iterationSubordinates.length > 0);
 
       res.status(200).json({
         code: 200,
         user: user,
-        result: [
-          boss_subordinates_subordinates,
-          boss_subordinates_subordinates_subordinates,
-        ],
+        subordinates: boss_subordinates,
       });
 
       break;
