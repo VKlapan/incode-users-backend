@@ -7,6 +7,7 @@ const route = express.Router();
 route.get("/", middlewares.authMiddleware, controllers.getAllUsers);
 route.post("/signup", controllers.createUser);
 route.get("/signin", controllers.loginUser);
+route.patch("/:userid/boss", controllers.changeUserBoss);
 
 module.exports = route;
 
