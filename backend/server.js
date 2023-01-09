@@ -17,12 +17,12 @@ dotenv.config({ path: CONFIG_PATH });
 app.use("/api/v1/users", require("./routes/usersRoutes.js"));
 
 app.use((req, res) => {
-  res.status(404).json({ message: "Not found" });
+  res.status(404).json({ code: 404, message: "Not found" });
 });
 
 app.use((err, req, res, next) => {
   const { status = 500, message = "Serever error" } = err;
-  res.status(status).json({ message });
+  res.status(status).json({ code: status, message });
 });
 
 connectDb();

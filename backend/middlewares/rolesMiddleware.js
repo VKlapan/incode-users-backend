@@ -1,35 +1,36 @@
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
+const User = require("../models/UserModel");
+const helpers = require("../helpers");
 
 const rolesMiddleware = (requiredRole) => {
-  return (req, res, next) => {
+  return async (req, res, next) => {
     try {
-      if (
-        req.headers.authorization &&
-        req.headers.authorization.startsWith("Bearer")
-      ) {
-        const [Bearer, token] = req.headers.authorization.split(" ");
+      if (!req.header("authorization")) {
+        throw helpers.httpError(401, "Please, provide a token");
+      }
 
-        if (!token) {
-          return res.status(400).json({
-            code: 400,
-            message: "Please, provide token",
-          });
-        }
+      const [tokenType, token] = req.header("authorization").split(" ");
 
-        const decoded = jwt.verify(token, process.env.SECRET);
-        const { roles } = decoded.data;
+      if (!token || tokenType !== "Bearer") {
+        throw helpers.httpError(401, "Please, provide a token");
+      }
 
-        if (requiredRole !== roles) {
-          return res
-            .status(403)
-            .json({ code: 403, message: "You don't have permission" });
-        }
+      const decoded = jwt.verify(token, process.env.SECRET);
+
+      const { roles, id: bossId } = decoded.data;
+      const { userid: id } = req.params;
+
+      const user = await User.findById(id);
+
+      if (requiredRole !== roles || bossId !== user.boss.toString()) {
+        throw helpers.httpError(403, "You don't have permission");
       }
 
       next();
     } catch (error) {
-      return res.status(403).json({ code: 403, message: "Unauthorized" });
+      next(error);
+      // next(helpers.httpError(401, "Please, provide a token"));
     }
   };
 };
