@@ -6,7 +6,12 @@ const changeUserBoss = async (req, res) => {
   const [tokenType, token] = req.header("authorization").split(" ");
   const { bossId: newBoss } = req.body;
 
-  return res.status(201).json({ code: 201, userid, token, newBoss });
+  const response = await User.findByIdAndUpdate(
+    { _id: userid },
+    { boss: newBoss }
+  );
+
+  return res.status(201).json({ code: 201, userid, token, newBoss, response });
 };
 
 module.exports = changeUserBoss;

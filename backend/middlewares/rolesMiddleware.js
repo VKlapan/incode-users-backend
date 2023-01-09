@@ -30,7 +30,6 @@ const rolesMiddleware = (requiredRole) => {
       next();
     } catch (error) {
       next(error);
-      // next(helpers.httpError(401, "Please, provide a token"));
     }
   };
 };
