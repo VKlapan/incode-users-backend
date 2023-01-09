@@ -10,19 +10,11 @@ const getAllUsers = async (req, res) => {
       res.status(200).json({ code: 200, user: user });
       break;
     case "boss":
-      let subordinates = await User.find({ boss: id });
-      let subordinates_objects = createUsersObjects(subordinates);
-
-      let inner_subordinates = subordinates_objects;
-
-      do {
-        inner_subordinates = await getSubSubordinates(inner_subordinates);
-      } while (inner_subordinates.length > 0);
+      const userSubordinatesTree = await getUserSubordinatesTree(user);
 
       res.status(200).json({
         code: 200,
-        user: user,
-        subordinates: subordinates_objects,
+        data: userSubordinatesTree,
       });
 
       break;
@@ -33,22 +25,17 @@ const getAllUsers = async (req, res) => {
   }
 };
 
-function getSubSubordinates(subordinates) {
-  return Promise.all(
-    subordinates.map(async (userObject) => {
-      return (userObject.subordinates = createUsersObjects(
-        await getOwnSubordinates(userObject.user._id)
-      ));
-    })
-  ).then((list) => list.flat(1));
-}
+async function getUserSubordinatesTree(user) {
+  const userSubordinates = await User.find({ boss: user._id });
 
-function getOwnSubordinates(id) {
-  return User.find({ boss: id });
-}
+  if (userSubordinates.length === 0) {
+    return { user, subordinates: [] };
+  }
+  const userSubordinatesNodes = await Promise.all(
+    userSubordinates.map(getUserSubordinatesTree)
+  );
 
-function createUsersObjects(subordinates) {
-  return subordinates.map((user) => (userObject = { user }));
+  return { user, subordinates: userSubordinatesNodes };
 }
 
 module.exports = getAllUsers;
