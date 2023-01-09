@@ -1,16 +1,21 @@
 const express = require("express");
 const controllers = require("../controllers/users");
 const middlewares = require("../middlewares");
+const helpers = require("../helpers");
 
 const route = express.Router();
 
-route.get("/", middlewares.authMiddleware, controllers.getAllUsers);
-route.post("/signup", controllers.createUser);
-route.get("/signin", controllers.loginUser);
+route.get(
+  "/",
+  middlewares.authMiddleware,
+  helpers.controllerWrapper(controllers.getAllUsers)
+);
+route.post("/signup", helpers.controllerWrapper(controllers.createUser));
+route.get("/signin", helpers.controllerWrapper(controllers.loginUser));
 route.patch(
   "/:userid/boss",
   middlewares.rolesMiddleware("boss"),
-  controllers.changeUserBoss
+  helpers.controllerWrapper(controllers.changeUserBoss)
 );
 
 module.exports = route;

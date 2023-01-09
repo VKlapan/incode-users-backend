@@ -11,7 +11,9 @@ const changeUserBoss = async (req, res) => {
     { boss: newBoss }
   );
 
-  return res.status(201).json({ code: 201, userid, token, newBoss, response });
+  return res
+    .status(201)
+    .json({ code: 201, message: "User's boss was changed" });
 };
 
 module.exports = changeUserBoss;
